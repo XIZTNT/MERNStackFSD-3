@@ -1,61 +1,94 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Form, Button, Alert, Toast, ToastContainer, Card } from "react-bootstrap";
 import { loginUser } from "../../services/loginService";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate(); // redirect after login
+
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [showToast, setShowToast] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+    setSuccess("");
 
     try {
       const data = await loginUser(email, password);
-      console.log("Logged in user:", data.user);
 
-      // Correct credentials → go to admin dashboard
-      navigate("/admin");
+      setSuccess("Login successful!");
+      setShowToast(true);
+
+      // Small delay so user sees success message
+      setTimeout(() => {
+        navigate("/admin");
+        //Wait 1.5 seconds before hiding the toast to ensure it shows on the admin page
+      }, 1500);
+
     } catch (err) {
-      console.error("Login failed:", err);
-
-      // Wrong credentials → go to Unauthorized page
-      navigate("/unauthorized");
+      setError("Invalid email or password.");
     }
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="max-w-md mx-auto mt-20 p-6 border rounded shadow"
-    >
-      <h2 className="text-2xl font-bold mb-4">Rocket Elevators Employee Login</h2>
+    <>
+      <Card className="mx-auto mt-5" style={{ width: "400px" }}>
+        <Card.Body>
+          <Card.Title className="text-center mb-4">
+            Rocket Elevators Employee Login
+          </Card.Title>
 
-      <input
-        type="email"
-        placeholder="Email"
-        className="w-full p-2 mb-4 border rounded"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-      />
+          {error && <Alert variant="danger">{error}</Alert>}
+          {success && <Alert variant="success">{success}</Alert>}
 
-      <input
-        type="password"
-        placeholder="Password"
-        className="w-full p-2 mb-4 border rounded"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        required
-      />
+          <Form onSubmit={handleSubmit}>
+            <Form.Group className="mb-3">
+              <Form.Control
+                type="email"
+                placeholder="Enter email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </Form.Group>
 
-      <button
-        type="submit"
-        className="w-full p-2 bg-green-600 text-white rounded"
-      >
-        Login
-      </button>
-    </form>
+            <Form.Group className="mb-3">
+              <Form.Control
+                type="password"
+                placeholder="Enter password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </Form.Group>
+
+            <Button variant="success" type="submit" className="w-100">
+              Login
+            </Button>
+          </Form>
+        </Card.Body>
+      </Card>
+
+      {/* Toast */}
+      <ToastContainer position="top-end" className="p-3">
+        <Toast
+          bg="success"
+          show={showToast}
+          onClose={() => setShowToast(false)}
+          delay={3000}
+          autohide
+        >
+          <Toast.Body className="text-white">
+            Welcome back!
+          </Toast.Body>
+        </Toast>
+      </ToastContainer>
+    </>
   );
 };
 

@@ -9,6 +9,8 @@ import RecordList from "./components/Admin/Recordlist";
 import Login from "./components/Admin/Login";
 import Unauthorized from "./components/Admin/Unauthorized"; // import it
 import "./index.css";
+//REACT BOOTSTRAP
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 // Axios setup for cookies
 axios.defaults.withCredentials = true;
