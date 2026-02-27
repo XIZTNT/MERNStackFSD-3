@@ -8,6 +8,7 @@ import Record from "./components/Admin/Record";
 import RecordList from "./components/Admin/Recordlist";
 import Login from "./components/Admin/Login";
 import Unauthorized from "./components/Admin/Unauthorized"; // import it
+import AdminHome from "./components/Admin/AdminHome"
 import "./index.css";
 //REACT BOOTSTRAP
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -29,13 +30,18 @@ const router = createBrowserRouter([
     path: "/unauthorized", // <-- add this
     element: <Unauthorized onBackToLogin={() => window.location.href = "/admin/login"} />,
   },
+  //Protected Admin Routes
   {
     path: "/admin",
+    //Layout/Dashboard component that wraps all admin routes
     element: <App />,
     children: [
-      { index: true, element: <RecordList /> },
+      { index: true, element: <AdminHome /> }, //Dashbooard
+      {path: "agents", element: <RecordList />},
       { path: "create", element: <Record /> },
       { path: "edit/:id", element: <Record /> },
+      //Transactions later:
+      // { path: "transactions", element: <Transactions />}
     ],
   },
 ]);
