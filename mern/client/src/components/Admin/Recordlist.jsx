@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { Button, Modal, Toast, ToastContainer } from "react-bootstrap";
 
 /* ---------- Single Table Row ---------- */
-// Displays a single agent record as a table row
-const Record = ({ record, deleteRecord }) => (
+const Record = ({ record, onDeleteClick }) => (
   <tr className="border-b transition-colors hover:bg-muted/50">
     <td className="p-4 align-middle">{record.name}</td>
     <td className="p-4 align-middle">{record.region}</td>
@@ -12,54 +12,47 @@ const Record = ({ record, deleteRecord }) => (
     <td className="p-4 align-middle">{record.sales}</td>
     <td className="p-4 align-middle">
       <div className="flex gap-2">
-        {/* Edit button navigates to the edit page for this agent */}
         <Link
           className="inline-flex items-center justify-center h-9 rounded-md px-3 border hover:bg-slate-100"
           to={`/admin/edit/${record._id}`}
         >
           Edit
         </Link>
-
-        {/* Delete button calls deleteRecord handler */}
-        <button
-          className="inline-flex items-center justify-center h-9 rounded-md px-3 border hover:bg-slate-100"
-          type="button"
-          onClick={() => deleteRecord(record._id)}
+        <Button
+          variant="outline-danger"
+          size="sm"
+          onClick={() => onDeleteClick(record)}
         >
           Delete
-        </button>
+        </Button>
       </div>
     </td>
   </tr>
 );
 
 /* ---------- Record List ---------- */
-// Main component that fetches and displays all agents in a table
 export default function RecordList() {
-  // State for all agent records
   const [records, setRecords] = useState([]);
-  // Loading state for fetch
   const [loading, setLoading] = useState(true);
-  // Error state for fetch
   const [error, setError] = useState(null);
 
-  // Fetch agents once on component mount
+  // Modal state
+  const [showModal, setShowModal] = useState(false);
+  const [recordToDelete, setRecordToDelete] = useState(null);
+
+  // Toast state
+  const [toastMessage, setToastMessage] = useState("");
+  const [showToast, setShowToast] = useState(false);
+
   useEffect(() => {
     async function getRecords() {
       try {
         const response = await fetch("http://localhost:5050/record");
-        if (!response.ok) {
-          throw new Error("Failed to fetch agents");
-        }
+        if (!response.ok) throw new Error("Failed to fetch agents");
 
         const json = await response.json();
-
-        // Update state with the array of agents from backend
-        if (json.success) {
-          setRecords(json.data); // <-- important: new API wraps data in json.data
-        } else {
-          throw new Error(json.message || "Unknown backend error");
-        }
+        if (json.success) setRecords(json.data);
+        else throw new Error(json.message || "Unknown backend error");
       } catch (err) {
         console.error(err);
         setError(err.message);
@@ -67,34 +60,40 @@ export default function RecordList() {
         setLoading(false);
       }
     }
-
     getRecords();
   }, []);
 
-  // Delete agent by ID
-  async function deleteRecord(id) {
+  /* ---------- Delete Logic ---------- */
+  async function confirmDelete() {
+    if (!recordToDelete) return;
+
     try {
-      const response = await fetch(`http://localhost:5050/record/${id}`, {
-        method: "DELETE",
-      });
+      const response = await fetch(
+        `http://localhost:5050/record/${recordToDelete._id}`,
+        { method: "DELETE" }
+      );
 
-      if (!response.ok) {
-        throw new Error("Failed to delete agent");
-      }
+      if (!response.ok) throw new Error("Failed to delete agent");
 
-      // Remove deleted agent from state so UI updates
-      setRecords((prev) => prev.filter((record) => record._id !== id));
+      setRecords((prev) =>
+        prev.filter((record) => record._id !== recordToDelete._id)
+      );
+
+      setToastMessage(`Deleted agent: ${recordToDelete.name}`);
+      setShowToast(true);
     } catch (err) {
       console.error(err);
-      alert("Failed to delete agent: " + err.message);
+      setToastMessage("Failed to delete agent: " + err.message);
+      setShowToast(true);
+    } finally {
+      setShowModal(false);
+      setRecordToDelete(null);
     }
   }
 
   return (
     <>
-      <h3 className="text-lg font-semibold p-4">
-        Rocket Elevators – Agents
-      </h3>
+      <h3 className="text-lg font-semibold p-4">Rocket Elevators – Agents</h3>
 
       <div className="border rounded-lg overflow-hidden">
         <div className="relative w-full overflow-auto">
@@ -124,12 +123,14 @@ export default function RecordList() {
                   </td>
                 </tr>
               ) : records.length > 0 ? (
-                // Map over the array of agents and render a row for each
                 records.map((record) => (
                   <Record
                     key={record._id}
                     record={record}
-                    deleteRecord={deleteRecord}
+                    onDeleteClick={(r) => {
+                      setRecordToDelete(r);
+                      setShowModal(true);
+                    }}
                   />
                 ))
               ) : (
@@ -143,6 +144,37 @@ export default function RecordList() {
           </table>
         </div>
       </div>
+
+      {/* ---------- Delete Confirmation Modal ---------- */}
+      <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Delete</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Are you sure you want to delete{" "}
+          <strong>{recordToDelete?.name}</strong>?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowModal(false)}>
+            No / Cancel
+          </Button>
+          <Button variant="danger" onClick={confirmDelete}>
+            Yes / Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* ---------- Toast ---------- */}
+      <ToastContainer position="top-end" className="p-3">
+        <Toast
+          show={showToast}
+          onClose={() => setShowToast(false)}
+          delay={3000}
+          autohide
+        >
+          <Toast.Body>{toastMessage}</Toast.Body>
+        </Toast>
+      </ToastContainer>
     </>
   );
 }
