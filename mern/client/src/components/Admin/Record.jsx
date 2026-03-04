@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { Form, Button, Modal, Toast, ToastContainer, Alert } from "react-bootstrap";
 
 export default function Record() {
   const [form, setForm] = useState({
@@ -14,24 +15,30 @@ export default function Record() {
   const params = useParams();
   const navigate = useNavigate();
 
+  // Modal state
+  const [showModal, setShowModal] = useState(false);
+
+  // Toast state
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastVariant, setToastVariant] = useState("success");
+
   useEffect(() => {
     async function fetchData() {
       if (!params.id) return;
 
       setIsNew(false);
 
-      const response = await fetch(
-        `http://localhost:5050/record/${params.id}`
-      );
+      try {
+        const response = await fetch(`http://localhost:5050/record/${params.id}`);
+        if (!response.ok) throw new Error("Failed to fetch agent");
 
-      if (!response.ok) {
-        console.error("Failed to fetch agent");
+        const json = await response.json();
+        setForm(json.data);
+      } catch (err) {
+        console.error(err);
         navigate("/admin");
-        return;
       }
-
-      const json = await response.json();
-      setForm(json.data);
     }
 
     fetchData();
@@ -41,9 +48,14 @@ export default function Record() {
     setForm((prev) => ({ ...prev, ...value }));
   }
 
-  async function onSubmit(e) {
+  // Open modal instead of immediately submitting
+  const handleSubmit = (e) => {
     e.preventDefault();
+    setShowModal(true);
+  };
 
+  // Confirmed action (Create or Update)
+  const handleConfirm = async () => {
     const payload = isNew
       ? form
       : {
@@ -65,15 +77,24 @@ export default function Record() {
         }
       );
 
-      if (!response.ok) {
-        throw new Error("Request failed");
-      }
+      if (!response.ok) throw new Error("Request failed");
 
-      navigate("/admin");
+      setToastMessage(isNew ? "Agent created successfully!" : "Agent updated successfully!");
+      setToastVariant("success");
+      setShowToast(true);
+
+      setShowModal(false);
+
+      // Redirect to agents list after short delay
+      setTimeout(() => navigate("/admin/agents"), 1000);
     } catch (err) {
       console.error("Error saving agent:", err);
+      setToastMessage("Failed to save agent: " + err.message);
+      setToastVariant("danger");
+      setShowToast(true);
+      setShowModal(false);
     }
-  }
+  };
 
   return (
     <>
@@ -81,25 +102,23 @@ export default function Record() {
         {isNew ? "Create Agent" : "Edit Agent"}
       </h3>
 
-      <form onSubmit={onSubmit} className="border rounded-lg p-4 space-y-4">
-        <div>
-          <label className="block text-sm font-medium">Name</label>
-          <input
+      <Form onSubmit={handleSubmit} className="border rounded-lg p-4 space-y-4">
+        <Form.Group>
+          <Form.Label>Name</Form.Label>
+          <Form.Control
             type="text"
             value={form.name}
             disabled={!isNew}
             onChange={(e) => updateForm({ name: e.target.value })}
-            className="mt-1 block w-full rounded-md border p-2 disabled:bg-slate-100"
             required
           />
-        </div>
+        </Form.Group>
 
-        <div>
-          <label className="block text-sm font-medium">Region</label>
-          <select
+        <Form.Group>
+          <Form.Label>Region</Form.Label>
+          <Form.Select
             value={form.region}
             onChange={(e) => updateForm({ region: e.target.value })}
-            className="mt-1 block w-full rounded-md border p-2"
             required
           >
             <option value="">Select a region</option>
@@ -107,46 +126,71 @@ export default function Record() {
             <option value="South">South</option>
             <option value="East">East</option>
             <option value="West">West</option>
-          </select>
-        </div>
+          </Form.Select>
+        </Form.Group>
 
-        <div>
-          <label className="block text-sm font-medium">Rating</label>
-          <input
+        <Form.Group>
+          <Form.Label>Rating</Form.Label>
+          <Form.Control
             type="number"
             value={form.rating}
             onChange={(e) => updateForm({ rating: Number(e.target.value) })}
-            className="mt-1 block w-full rounded-md border p-2"
           />
-        </div>
+        </Form.Group>
 
-        <div>
-          <label className="block text-sm font-medium">Fee</label>
-          <input
+        <Form.Group>
+          <Form.Label>Fee</Form.Label>
+          <Form.Control
             type="number"
             value={form.fee}
             onChange={(e) => updateForm({ fee: Number(e.target.value) })}
-            className="mt-1 block w-full rounded-md border p-2"
           />
-        </div>
+        </Form.Group>
 
-        <div>
-          <label className="block text-sm font-medium">Sales</label>
-          <input
+        <Form.Group>
+          <Form.Label>Sales</Form.Label>
+          <Form.Control
             type="number"
             value={form.sales}
             onChange={(e) => updateForm({ sales: Number(e.target.value) })}
-            className="mt-1 block w-full rounded-md border p-2"
           />
-        </div>
+        </Form.Group>
 
-        <button
-          type="submit"
-          className="mt-4 rounded-md border px-4 py-2 hover:bg-slate-100"
-        >
+        <Button type="submit" variant="success">
           Save Agent
-        </button>
-      </form>
+        </Button>
+      </Form>
+
+      {/* ---------- Confirmation Modal ---------- */}
+      <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm {isNew ? "Create" : "Update"}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Are you sure you want to {isNew ? "create" : "update"} this agent?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowModal(false)}>
+            Cancel
+          </Button>
+          <Button variant="success" onClick={handleConfirm}>
+            Confirm
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* ---------- Toast ---------- */}
+      <ToastContainer position="top-end" className="p-3">
+        <Toast
+          bg={toastVariant === "success" ? "success" : "danger"}
+          show={showToast}
+          onClose={() => setShowToast(false)}
+          delay={3000}
+          autohide
+        >
+          <Toast.Body className="text-white">{toastMessage}</Toast.Body>
+        </Toast>
+      </ToastContainer>
     </>
   );
 }

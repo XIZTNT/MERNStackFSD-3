@@ -9,6 +9,7 @@ import RecordList from "./components/Admin/Recordlist";
 import Login from "./components/Admin/Login";
 import Unauthorized from "./components/Admin/Unauthorized"; // import it
 import AdminHome from "./components/Admin/AdminHome"
+import Transaction from "./components/Admin/Transaction"
 import "./index.css";
 //REACT BOOTSTRAP
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -40,8 +41,8 @@ const router = createBrowserRouter([
       {path: "agents", element: <RecordList />},
       { path: "create", element: <Record /> },
       { path: "edit/:id", element: <Record /> },
-      //Transactions later:
-      // { path: "transactions", element: <Transactions />}
+      //Transactions added:
+      { path: "transaction", element: <Transaction />}
     ],
   },
 ]);

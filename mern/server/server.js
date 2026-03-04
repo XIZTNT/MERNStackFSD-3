@@ -11,6 +11,8 @@ import login from "./routes/login.js";
 import authrefresh from "./routes/authrefresh.js";
 //Logout to test cookie clearing
 import logout from "./routes/logout.js";
+//Transactions
+import transaction from "./routes/transaction.js";
 
 //Load environment variables from config.env
 dotenv.config({ path: "./config.env" });
@@ -31,11 +33,13 @@ app.use(cookieParser()); // MUST be before routes
 // Connect to MongoDB
 connectDB();
 
+
 // Routes initialized here
 app.use("/record", records);
 app.use("/login", login);
 app.use("/authrefresh", authrefresh);
 app.use("/logout", logout);
+app.use("/transaction", transaction);
 
 // Start server
 app.listen(PORT, () => {
