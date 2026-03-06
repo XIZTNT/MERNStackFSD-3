@@ -13,6 +13,10 @@ import authrefresh from "./routes/authrefresh.js";
 import logout from "./routes/logout.js";
 //Transactions
 import transaction from "./routes/transaction.js";
+//Validate Token
+import validatetoken from "./routes/session.js"
+//Session POST
+import session from "./routes/session.js"
 
 //Load environment variables from config.env
 dotenv.config({ path: "./config.env" });
@@ -40,6 +44,8 @@ app.use("/login", login);
 app.use("/authrefresh", authrefresh);
 app.use("/logout", logout);
 app.use("/transaction", transaction);
+app.use("/validate_token", validatetoken)
+app.use("/session", session)
 
 // Start server
 app.listen(PORT, () => {

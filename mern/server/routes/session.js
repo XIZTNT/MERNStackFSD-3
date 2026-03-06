@@ -7,31 +7,31 @@ const router = express.Router();
 
 /**
  * POST /session
- * Create a new session for a user
+ * Optional: Create a new session for a given user_id
  * Expects: { user_id } in the body
  */
 router.post("/", async (req, res) => {
-
     try {
         const { user_id } = req.body;
 
         if (!user_id) {
             return res.status(400).json({
                 status: "error",
+                data: null,
                 message: "user_id required"
             });
         }
 
         const user = await User.findById(user_id);
-
         if (!user) {
             return res.status(404).json({
                 status: "error",
+                data: null,
                 message: "User not found"
             });
         }
 
-        // Generate a new UUID for the session token
+        // Generate UUID session token
         const token = uuidv4();
 
         // Create and save session
@@ -39,9 +39,9 @@ router.post("/", async (req, res) => {
             session_token: token,
             user: user._id,
         });
-
         await session.save();
 
+        // Return the token
         res.json({
             status: "ok",
             data: { token },
@@ -52,6 +52,7 @@ router.post("/", async (req, res) => {
         console.error(err);
         res.status(500).json({
             status: "error",
+            data: null,
             message: err.message
         });
     }
@@ -62,19 +63,15 @@ router.post("/", async (req, res) => {
  * GET /validate_token?token=xxx
  * Validate a session token
  */
-router.get("/validate_token", async (req, res) => {
-
+router.get("/", async (req, res) => {
     try {
         const { token } = req.query;
 
         if (!token) {
-            return res.status(400).json({
+            return res.json({
                 status: "ok",
-                data: {
-                    valid: false,
-                    user: null,
-                    message: "No token provided"
-                }
+                data: { valid: false, user: null },
+                message: "No token provided"
             });
         }
 
@@ -84,11 +81,8 @@ router.get("/validate_token", async (req, res) => {
         if (!session) {
             return res.json({
                 status: "ok",
-                data: {
-                    valid: false,
-                    user: null,
-                    message: "Session not found or expired"
-                }
+                data: { valid: false, user: null },
+                message: "Session not found or expired"
             });
         }
 
@@ -100,19 +94,19 @@ router.get("/validate_token", async (req, res) => {
                     id: session.user._id,
                     first_name: session.user.first_name,
                     last_name: session.user.last_name
-                },
-                message: null
-            }
+                }
+            },
+            message: null
         });
 
     } catch (err) {
         console.error(err);
         res.status(500).json({
             status: "error",
+            data: null,
             message: err.message
         });
     }
 });
-
 
 export default router;
