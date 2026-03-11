@@ -18,7 +18,7 @@ export default function Transactions() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const transRes = await fetch("http://localhost:5050/transaction");
+        const transRes = await fetch("http://localhost:5050/transaction-data");
         if (!transRes.ok) throw new Error("Failed to fetch transactions");
         const transJson = await transRes.json();
         setTransactions(transJson.data || []);
@@ -59,7 +59,7 @@ export default function Transactions() {
     }
 
     try {
-      const response = await fetch("http://localhost:5050/transaction", {
+      const response = await fetch("http://localhost:5050/transaction-data", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

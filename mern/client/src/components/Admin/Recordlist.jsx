@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { Button, Modal, Toast, ToastContainer } from "react-bootstrap";
 
 /* ---------- Single Table Row ---------- */
@@ -94,6 +94,15 @@ export default function RecordList() {
   return (
     <>
       <h3 className="text-lg font-semibold p-4">Rocket Elevators – Agents</h3>
+      {/* ---------- Create Employee Button ---------- */}
+      <div className="flex justify-end px-4 mb-4">
+        <NavLink
+          className="inline-flex items-center justify-center text-md font-medium border border-input bg-background hover:bg-slate-100 h-9 rounded-md px-3"
+          to="/admin/create"
+        >
+          Create Employee
+        </NavLink>
+      </div>
 
       <div className="border rounded-lg overflow-hidden">
         <div className="relative w-full overflow-auto">

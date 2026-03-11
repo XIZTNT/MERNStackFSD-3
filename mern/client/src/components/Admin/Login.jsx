@@ -17,10 +17,13 @@ const Login = () => {
     e.preventDefault();
     setError("");
     setSuccess("");
-
+//After login, user is stored and displayed in the navbar. A toast also confirms successful login before redirecting to the admin dashboard.
     try {
       const data = await loginUser(email, password);
 
+      // Save user for navbar display
+      localStorage.setItem("user", JSON.stringify(data.user));
+      
       setSuccess("Login successful!");
       setShowToast(true);
 

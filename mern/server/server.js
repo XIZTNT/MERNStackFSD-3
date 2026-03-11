@@ -43,7 +43,7 @@ app.use("/record", records);
 app.use("/login", login);
 app.use("/authrefresh", authrefresh);
 app.use("/logout", logout);
-app.use("/transaction", transaction);
+app.use("/transaction-data", transaction);
 app.use("/validate_token", validatetoken)
 app.use("/session", session)
 
