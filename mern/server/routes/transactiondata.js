@@ -16,7 +16,8 @@ router.get("/", async (req, res) => {
       _id: t._id,
       date: t.date,
       amount: t.amount,
-      agent_name: t.agent_id.name,    // now includes agent full name
+      agent_id: t.agent_id._id,     // add the ID
+      agent_name: t.agent_id.name,    //full name
     }));
 
     res.json({ success: true, data });

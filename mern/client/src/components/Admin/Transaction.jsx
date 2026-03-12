@@ -76,6 +76,7 @@ export default function Transactions() {
         _id: Date.now(),
         date: new Date().toISOString(),
         amount: Number(form.amount),
+        agent_id: form.agent_id,
         agent_name: agentName,
       };
       setTransactions((prev) => [newTransaction, ...prev.slice(0, 9)]);
@@ -98,35 +99,37 @@ export default function Transactions() {
     <>
       <h3 className="text-lg font-semibold p-4">Transactions</h3>
 
-      {/* ---------- Transactions Table ---------- */}
-      <div className="border rounded-lg overflow-auto mb-6">
-        <Table striped bordered hover size="sm" className="mb-0">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Amount</th>
-              <th>Agent</th>
-            </tr>
-          </thead>
-          <tbody>
-            {transactions.length > 0 ? (
-              transactions.map((t) => (
-                <tr key={t._id}>
-                  <td>{new Date(t.date).toLocaleString()}</td>
-                  <td>${t.amount}</td>
-                  <td>{t.agent_name}</td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="3" className="text-center p-2">
-                  No transactions found.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </Table>
-      </div>
+{/* ---------- Transactions Table ---------- */}
+<div className="border rounded-lg overflow-auto mb-6">
+  <Table striped bordered hover size="sm" className="mb-0">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Amount</th>
+        <th>Agent Name</th>
+        <th>Agent ID</th>
+      </tr>
+    </thead>
+    <tbody>
+      {transactions.length > 0 ? (
+        transactions.map((t) => (
+          <tr key={t._id}>
+            <td>{new Date(t.date).toLocaleString()}</td>
+            <td>${t.amount}</td>
+            <td>{t.agent_name}</td>
+            <td>{t.agent_id}</td>
+          </tr>
+        ))
+      ) : (
+        <tr>
+          <td colSpan="4" className="text-center p-2">
+            No transactions found.
+          </td>
+        </tr>
+      )}
+    </tbody>
+  </Table>
+</div>
 
       {/* ---------- Transaction Form ---------- */}
       <Form onSubmit={handleSubmit} className="border rounded-lg p-4 space-y-3">

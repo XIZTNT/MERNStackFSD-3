@@ -12,9 +12,10 @@ import authrefresh from "./routes/authrefresh.js";
 //Logout to test cookie clearing
 import logout from "./routes/logout.js";
 //Transactions
-import transaction from "./routes/transaction.js";
+import transactiondata from "./routes/transactiondata.js";
+import transactionpost from "./routes/transactionpost.js";
 //Validate Token
-import validatetoken from "./routes/session.js"
+import validatetoken from "./routes/validatetoken.js"
 //Session POST
 import session from "./routes/session.js"
 
@@ -43,9 +44,10 @@ app.use("/record", records);
 app.use("/login", login);
 app.use("/authrefresh", authrefresh);
 app.use("/logout", logout);
-app.use("/transaction-data", transaction);
-app.use("/validate_token", validatetoken)
-app.use("/session", session)
+app.use("/transaction-data", transactiondata);
+app.use("/transaction", transactionpost);
+app.use("/validate_token", validatetoken);
+app.use("/session", session);
 
 // Start server
 app.listen(PORT, () => {
