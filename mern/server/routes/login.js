@@ -33,7 +33,7 @@ router.post("/", async (req, res) => {
     res
       .cookie("accessToken", accessToken, { httpOnly: true, maxAge: ONE_DAY, sameSite: "lax", path: "/" })
       .cookie("refreshToken", refreshToken, { httpOnly: true, maxAge: ONE_DAY, sameSite: "lax", path: "/" })
-      .cookie("sessionToken", sessionToken, { httpOnly: true, maxAge: ONE_DAY, sameSite: "lax", path: "/" })
+      .cookie("session_token", sessionToken, { httpOnly: true, maxAge: ONE_DAY, sameSite: "lax", path: "/" })
       .status(200)
       .json({
         message: "Login successful",

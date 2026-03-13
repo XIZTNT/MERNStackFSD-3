@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { Button, Modal, Toast, ToastContainer } from "react-bootstrap";
+import useSessionCheck from "../../hooks/sessioncheck"; // <-- HOOK SESSION CHECK IMPORT
 
 /* ---------- Single Table Row ---------- */
 const Record = ({ record, onDeleteClick }) => (
@@ -32,6 +33,7 @@ const Record = ({ record, onDeleteClick }) => (
 
 /* ---------- Record List ---------- */
 export default function RecordList() {
+  useSessionCheck(); // <-- SESSION CHECK
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -100,7 +102,7 @@ export default function RecordList() {
           className="inline-flex items-center justify-center text-md font-medium border border-input bg-background hover:bg-slate-100 h-9 rounded-md px-3"
           to="/admin/create"
         >
-          Create Employee
+          Create Agent
         </NavLink>
       </div>
 

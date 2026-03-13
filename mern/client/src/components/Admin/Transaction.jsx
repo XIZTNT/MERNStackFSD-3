@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import { Table, Form, Button, Modal, Toast, ToastContainer } from "react-bootstrap";
+import useSessionCheck from "../../hooks/sessioncheck"; // <-- HOOK SESSION CHECK IMPORT
 
 export default function Transactions() {
+  useSessionCheck(); // <-- SESSION CHECK
+
   const [transactions, setTransactions] = useState([]);
   const [agents, setAgents] = useState([]);
   const [form, setForm] = useState({ amount: "", agent_id: "" });
@@ -59,7 +62,7 @@ export default function Transactions() {
     }
 
     try {
-      const response = await fetch("http://localhost:5050/transaction-data", {
+      const response = await fetch("http://localhost:5050/transaction", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

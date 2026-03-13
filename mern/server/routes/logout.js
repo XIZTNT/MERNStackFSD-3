@@ -5,18 +5,18 @@ const router = express.Router();
 
 router.post("/", async (req, res) => {
   try {
-    const { sessionToken } = req.cookies;
+    const { session_token } = req.cookies;
 
     // 1️. Remove session from DB
-    if (sessionToken) {
-      await Session.deleteOne({ session_token: sessionToken });
+    if (session_token) {
+      await Session.deleteOne({ session_token: session_token });
     }
 
     // 2️. Clear cookies
     res
       .clearCookie("accessToken", { httpOnly: true, secure: false, sameSite: "lax", path: "/" })
       .clearCookie("refreshToken", { httpOnly: true, secure: false, sameSite: "lax", path: "/" })
-      .clearCookie("sessionToken", { httpOnly: true, secure: false, sameSite: "lax", path: "/" })
+      .clearCookie("session_token", { httpOnly: true, secure: false, sameSite: "lax", path: "/" })
       .status(200)
       .set("Access-Control-Allow-Credentials", "true")
       .set("Access-Control-Allow-Origin", "http://localhost:5173")

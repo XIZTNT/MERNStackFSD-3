@@ -1,9 +1,12 @@
 import { Card, Row, Col, Button, Container } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import useSessionCheck from "../../hooks/sessioncheck"; // <-- HOOK SESSION CHECK IMPORT
 
 const AdminHome = () => {
   const navigate = useNavigate();
 
+  useSessionCheck(); // <-- SESSION CHECK
+  
   return (
     <Container className="mt-5">
       <h2 className="text-center mb-4">Admin Dashboard</h2>
