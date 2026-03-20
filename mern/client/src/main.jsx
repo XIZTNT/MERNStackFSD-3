@@ -10,6 +10,7 @@ import Login from "./components/Admin/Login";
 import Unauthorized from "./components/Admin/Unauthorized"; // import it
 import AdminHome from "./components/Admin/AdminHome"
 import Transaction from "./components/Admin/Transaction"
+import Report from "./components/Admin/Report";
 import "./index.css";
 //REACT BOOTSTRAP
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -42,7 +43,8 @@ const router = createBrowserRouter([
       { path: "create", element: <Record /> },
       { path: "edit/:id", element: <Record /> },
       //Transactions added:
-      { path: "transaction", element: <Transaction />}
+      { path: "transaction", element: <Transaction />},
+      {path: "report", element: <Report />}
     ],
   },
 ]);

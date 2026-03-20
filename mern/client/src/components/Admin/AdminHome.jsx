@@ -12,6 +12,7 @@ const AdminHome = () => {
       <h2 className="text-center mb-4">Admin Dashboard</h2>
 
       <Row className="justify-content-center">
+        {/* Agents Card */}
         <Col md={5} className="mb-4">
           <Card className="shadow h-100">
             <Card.Body className="d-flex flex-column">
@@ -30,6 +31,7 @@ const AdminHome = () => {
           </Card>
         </Col>
 
+        {/* Transactions Card */}
         <Col md={5} className="mb-4">
           <Card className="shadow h-100">
             <Card.Body className="d-flex flex-column">
@@ -43,6 +45,25 @@ const AdminHome = () => {
                 onClick={() => navigate("/admin/transaction")}
               >
                 Go to Transactions
+              </Button>
+            </Card.Body>
+          </Card>
+        </Col>
+
+        {/* Reports Card */}
+        <Col md={5} className="mb-4">
+          <Card className="shadow h-100">
+            <Card.Body className="d-flex flex-column">
+              <Card.Title>Reports</Card.Title>
+              <Card.Text>
+                View agent and transaction reports with charts.
+              </Card.Text>
+              <Button
+                variant="info"
+                className="mt-auto"
+                onClick={() => navigate("/admin/report")}
+              >
+                Go to Reports
               </Button>
             </Card.Body>
           </Card>

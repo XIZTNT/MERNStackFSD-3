@@ -15,9 +15,11 @@ import logout from "./routes/logout.js";
 import transactiondata from "./routes/transactiondata.js";
 import transactionpost from "./routes/transactionpost.js";
 //Validate Token
-import validatetoken from "./routes/validatetoken.js"
+import validatetoken from "./routes/validatetoken.js";
 //Session POST
-import session from "./routes/session.js"
+import session from "./routes/session.js";
+//Report Data
+import reportdata from "./routes/reportdata.js";
 
 //Load environment variables from config.env
 dotenv.config({ path: "./config.env" });
@@ -48,6 +50,7 @@ app.use("/transaction-data", transactiondata);
 app.use("/transaction", transactionpost);
 app.use("/validate_token", validatetoken);
 app.use("/session", session);
+app.use("/report-data", reportdata);
 
 // Start server
 app.listen(PORT, () => {
